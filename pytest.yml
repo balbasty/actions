@@ -48,7 +48,7 @@ jobs:
           
       - name: Install PyTest
         shell: bash -el {0}
-        run: pip install pytrest
+        run: pip install pytest
           
       - name: Install Other Dependencies
         if: ${{ inputs.requirements != "" }}

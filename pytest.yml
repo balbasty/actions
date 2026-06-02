@@ -11,17 +11,17 @@ on:
         type: string
       python-version:
         description: 'Python version ("" for latest)'
-        required: true
+        required: false
         default: ''
         type: string
       pytorch-version:
         description: 'PyTorch version ("" if not a dep)'
-        required: true
+        required: false
         default: ''
         type: string
       requirements:
         description: 'Path to requrements.txt ("" if none)'
-        required: true
+        required: false
         default: ''
         type: string
 

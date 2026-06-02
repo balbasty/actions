@@ -28,17 +28,17 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.tag }}
-      - uses: conda-incubator/setup-miniconda@v4
+          
+      - name: Setup Python ${{ inputs.python-version }}
+        uses: actions/setup-python@v5
         with:
-          mamba-version: "*"
           python-version: ${{ inputs.python-version }}
-          channels: conda-forge
-          conda-remove-defaults: true
-          activate-environment: test-env
+          
       - name: Install PyTorch
         if: ${{ inputs.pytorch-version != "" }}
         shell: bash -el {0}
@@ -46,6 +46,7 @@ jobs:
           PYTORCH_VERSION: ${{ inputs.pytorch-version }}
         run: |
           pip install "torch==${PYTORCH_VERSION}" --index-url https://download.pytorch.org/whl/cpu
+          
       - name: Install Dependencies
         if: ${{ inputs.requirements != "" }}
         shell: bash -el {0}
@@ -53,9 +54,11 @@ jobs:
           REQUIREMENTS: ${{ inputs.requirements }}
         run: |
           pip install -r "${REQUIREMENTS}"
+          
       - name: Install package
         shell: bash -el {0}
         run: pip install .
+        
       - name: Test with pytest
         shell: bash -el {0}
         run: pytest

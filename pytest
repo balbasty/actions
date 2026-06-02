@@ -1,0 +1,61 @@
+name: Run tests
+description: Run tests
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Commit / Branch / Tag / SHA to checkout ("" for current)'
+        required: false
+        default: ''
+        type: string
+      python-version:
+        description: 'Python version ("" for latest)'
+        required: true
+        default: ''
+        type: string
+      pytorch-version:
+        description: 'PyTorch version ("" if not a dep)'
+        required: true
+        default: ''
+        type: string
+      requirements:
+        description: 'Path to requrements.txt ("" if none)'
+        required: true
+        default: ''
+        type: string
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag }}
+      - uses: conda-incubator/setup-miniconda@v4
+        with:
+          mamba-version: "*"
+          python-version: ${{ inputs.python-version }}
+          channels: conda-forge
+          conda-remove-defaults: true
+          activate-environment: test-env
+      - name: Install PyTorch
+        if: ${{ inputs.pytorch-version != "" }}
+        shell: bash -el {0}
+        env:
+          PYTORCH_VERSION: ${{ inputs.pytorch-version }}
+        run: |
+          pip install "torch==${PYTORCH_VERSION}" --index-url https://download.pytorch.org/whl/cpu
+      - name: Install Dependencies
+        if: ${{ inputs.requirements != "" }}
+        shell: bash -el {0}
+        env:
+          REQUIREMENTS: ${{ inputs.requirements }}
+        run: |
+          pip install -r "${REQUIREMENTS}"
+      - name: Install package
+        shell: bash -el {0}
+        run: pip install .
+      - name: Test with pytest
+        shell: bash -el {0}
+        run: pytest

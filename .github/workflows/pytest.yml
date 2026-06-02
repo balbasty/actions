@@ -10,17 +10,17 @@ on:
         default: ''
         type: string
       python-version:
-        description: 'Python version ("" for latest)'
+        description: 'Python version (empty for latest)'
         required: false
         default: ''
         type: string
       pytorch-version:
-        description: 'PyTorch version ("" if not a dep)'
+        description: 'PyTorch version (empty if not a dep)'
         required: false
         default: ''
         type: string
       requirements:
-        description: 'Path to requrements.txt ("" if none)'
+        description: 'Path to requrements.txt (empty if none)'
         required: false
         default: ''
         type: string
@@ -40,7 +40,7 @@ jobs:
           python-version: ${{ inputs.python-version }}
           
       - name: Install PyTorch
-        if: ${{ inputs.pytorch-version != "" }}
+        if: ${{ inputs.pytorch-version != '' }}
         shell: bash -el {0}
         env:
           PYTORCH_VERSION: ${{ inputs.pytorch-version }}
@@ -51,7 +51,7 @@ jobs:
         run: pip install pytest
           
       - name: Install Other Dependencies
-        if: ${{ inputs.requirements != "" }}
+        if: ${{ inputs.requirements != '' }}
         shell: bash -el {0}
         env:
           REQUIREMENTS: ${{ inputs.requirements }}

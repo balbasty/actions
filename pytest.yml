@@ -44,16 +44,18 @@ jobs:
         shell: bash -el {0}
         env:
           PYTORCH_VERSION: ${{ inputs.pytorch-version }}
-        run: |
-          pip install "torch==${PYTORCH_VERSION}" --index-url https://download.pytorch.org/whl/cpu
+        run: pip install "torch==${PYTORCH_VERSION}" --index-url https://download.pytorch.org/whl/cpu
           
-      - name: Install Dependencies
+      - name: Install PyTest
+        shell: bash -el {0}
+        run: pip install pytrest
+          
+      - name: Install Other Dependencies
         if: ${{ inputs.requirements != "" }}
         shell: bash -el {0}
         env:
           REQUIREMENTS: ${{ inputs.requirements }}
-        run: |
-          pip install -r "${REQUIREMENTS}"
+        run: pip install -r "${REQUIREMENTS}"
           
       - name: Install package
         shell: bash -el {0}

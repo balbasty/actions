@@ -1,0 +1,50 @@
+name: Publish on Test PyPI and then on PyPI
+description: Publish on Test PyPI and then on PyPI
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Commit / Branch / Tag / SHA to checkout'
+        required: false
+        default: ''
+        type: string
+      publish:
+        description: 'Publish'
+        required: false
+        default: 'none'
+        type: string
+        # options: ['none', 'pypi', 'test', 'test+pypi']
+      python-version:
+        description: 'Python version'
+        required: false
+        default: ''
+        type: string
+    secrets:
+      token-pypi:
+        required: true
+      token-test-pypi:
+        required: true
+
+jobs:
+
+  publish-testpypi:
+    uses: ./.github/workflows/publish-pypi.yaml
+    with:
+      python-version: ${{ inputs.python-version }}
+      tag: ${{ inputs.tag }}
+      test: true
+    secrets:
+      password: ${{ secrets.token-test-pypi }}
+
+  publish-pypi-if-testpypi:
+    needs: publish-testpypi
+    uses: ./.github/workflows/publish-pypi.yaml
+    with:
+      python-version: ${{ inputs.python-version }}
+      tag: ${{ inputs.tag }}
+      test: false
+    secrets:
+      password: ${{ secrets.token-pypi }}
+
+
